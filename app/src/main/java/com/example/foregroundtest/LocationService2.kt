@@ -100,12 +100,14 @@ class LocationService2 : Service(), LocationListener {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
 
-            mNotificationManager!!.notify(it.id, createNotification(
-                channelId = "channel_01",
-                isOnlyAlertOnce = true,
-                title =  "${location?.latitude} : ${location?.longitude}",
-                pendingIntent = pendingIntent
-            ))
+            mNotificationManager!!.notify(
+                it.id, createNotification(
+                    channelId = "channel_01",
+                    isOnlyAlertOnce = true,
+                    title = "${location?.latitude} : ${location?.longitude}",
+                    pendingIntent = pendingIntent
+                )
+            )
         }
         listener?.onNewLocationRecieved(location)
     }
