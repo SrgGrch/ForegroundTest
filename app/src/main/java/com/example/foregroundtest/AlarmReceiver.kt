@@ -1,9 +1,12 @@
 package com.example.foregroundtest
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.SystemClock
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -11,10 +14,26 @@ class AlarmReceiver : BroadcastReceiver() {
             action = intent?.action
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context?.startForegroundService(alarmIntent)
-        } else {
-            context?.startService(alarmIntent)
+        context?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(alarmIntent)
+            } else {
+                context.startService(alarmIntent)
+            }
+
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
+                action = "RESTART"
+            }.let {
+                PendingIntent.getBroadcast(context, 0, it, 0)
+            }
+
+
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + 60 * 1000,
+                alarmIntent
+            )
         }
     }
 }

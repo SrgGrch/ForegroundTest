@@ -94,12 +94,18 @@ class LocationService : Service(), LocationListener {
             PendingIntent.getBroadcast(this, 0, it, 0)
         }
 
-        alarmManager.setRepeating(
+
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             SystemClock.elapsedRealtime() + 60 * 1000,
-            60 * 1000,
             alarmIntent
         )
+//        alarmManager.setRepeating(
+//            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//            SystemClock.elapsedRealtime() + 60 * 1000,
+//            60 * 1000,
+//            alarmIntent
+//        )
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
