@@ -58,8 +58,6 @@ class LocationService : Service(), LocationListener {
             )
         )
 
-        Toast.makeText(this, android.os.Process.myPid().toString(), Toast.LENGTH_LONG).show()
-
         startForeground(notificationInfo!!.id, notificationInfo!!.notification)
     }
 
@@ -67,6 +65,13 @@ class LocationService : Service(), LocationListener {
         when (intent?.action) {
             "RESTART" -> {
                 if (!isInited) {
+
+                    val prefs = getSharedPreferences("Loc", Context.MODE_PRIVATE)
+
+                    prefs.edit()
+                        .putInt("Restart", prefs.getInt("Restart", 0) + 1)
+                        .apply()
+
                     Toast.makeText(this, "Restarted", Toast.LENGTH_LONG).show()
                     start()
                 }
@@ -84,6 +89,20 @@ class LocationService : Service(), LocationListener {
         }
 
         return START_STICKY
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).apply {
+            action = "RESTART"
+        }.let {
+            PendingIntent.getBroadcast(this, 0, it, 0)
+        }
+
+        alarmManager.cancel(alarmIntent)
+
+        Toast.makeText(this, "Перезапуск остановлен", Toast.LENGTH_LONG).show()
+        super.onTaskRemoved(rootIntent)
     }
 
     private fun start() {
@@ -167,11 +186,14 @@ class LocationService : Service(), LocationListener {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
 
+            val prefs = getSharedPreferences("Loc", Context.MODE_PRIVATE)
+            val restartCount = prefs.getInt("Restart", 0)
+
             mNotificationManager!!.notify(
                 it.id, createNotification(
                     channelId = "channel_01",
                     isOnlyAlertOnce = true,
-                    title = "${location?.latitude} : ${location?.longitude}, ${count++}",
+                    title = "${location?.latitude} : ${location?.longitude}, ${count++}. R: $restartCount",
                     pendingIntent = pendingIntent
                 )
             )

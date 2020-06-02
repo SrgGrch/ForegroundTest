@@ -51,9 +51,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Toast.makeText(this, android.os.Process.myPid().toString(), Toast.LENGTH_LONG).show()
-
         startButton.setOnClickListener {
+
+            val prefs = getSharedPreferences("Loc", Context.MODE_PRIVATE)
+
+            prefs.edit()
+                .putInt("Restart", 0)
+                .apply()
+
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -98,6 +103,12 @@ class MainActivity : AppCompatActivity() {
                 count = 0
                 textView2.text = count.toString()
             }
+
+            val prefs = getSharedPreferences("Loc", Context.MODE_PRIVATE)
+
+            prefs.edit()
+                .putInt("Restart", 0)
+                .apply()
         }
 
         stopAlarmButton.setOnClickListener {
