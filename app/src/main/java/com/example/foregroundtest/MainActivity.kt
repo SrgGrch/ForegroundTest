@@ -1,6 +1,8 @@
 package com.example.foregroundtest
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -87,13 +89,36 @@ class MainActivity : AppCompatActivity() {
             if (locationService != null) {
                 locationService?.removeOnNewLocationListener()
                 unbindService(mConnection)
-                stopService(Intent(this, LocationService::class.java).apply {
+                startService(Intent(this, LocationService::class.java).apply {
                     action = "STOP"
                 })
                 startButton.isEnabled = true
                 stopButton.isEnabled = false
                 textView.text = "Stopped"
+                count = 0
+                textView2.text = count.toString()
             }
         }
+
+        stopAlarmButton.setOnClickListener {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmIntent = Intent(this, AlarmReceiver::class.java).apply {
+                action = "RESTART"
+            }.let {
+                PendingIntent.getBroadcast(this, 0, it, 0)
+            }
+
+            alarmManager.cancel(alarmIntent)
+
+            Toast.makeText(this, "Перезапуск остановлен", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onDestroy() {
+        startService(Intent(this, LocationService::class.java).apply {
+            action = "STOP"
+        })
+
+        super.onDestroy()
     }
 }

@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-    <activity
+        <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
@@ -28,13 +28,18 @@
             android:name=".LocationService"
             android:exported="false"
             android:foregroundServiceType="location"
-            android:process=":locationService"
             android:stopWithTask="false" />
 
         <service
             android:name=".LocationService2"
+            android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location"
             android:stopWithTask="false" />
+
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 </manifest>

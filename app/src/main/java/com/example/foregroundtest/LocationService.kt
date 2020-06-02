@@ -8,10 +8,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -25,9 +22,11 @@ class LocationService : Service(), LocationListener {
     private lateinit var locationManager: LocationManager
     private var mNotificationManager: NotificationManager? = null
 
-    var notificationInfo: NotificationInfo? = null
+    private var notificationInfo: NotificationInfo? = null
 
-    var count = 1
+    private var count = 1
+
+    private var isInited = false
 
     override fun onCreate() {
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -47,7 +46,8 @@ class LocationService : Service(), LocationListener {
             0,
             Intent(baseContext, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT
-        ) // 0 - We need different requestCode's in order to guarantee "difference" of intents
+        )
+
         notificationInfo = NotificationInfo(
             -1,
             createNotification(
@@ -64,10 +64,43 @@ class LocationService : Service(), LocationListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            "RESTART" -> {
+                if (!isInited) {
+                    Toast.makeText(this, "Restarted", Toast.LENGTH_LONG).show()
+                    start()
+                }
+            }
+
+            "STOP" -> {
+                isInited = false
+                stopForeground(true)
+                locationManager.removeUpdates(this)
+                stopSelf()
+            }
+            "START" -> {
+                start()
+            }
+        }
+
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    private fun start() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).apply {
+            action = "RESTART"
+        }.let {
+            PendingIntent.getBroadcast(this, 0, it, 0)
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            SystemClock.elapsedRealtime() + 60 * 1000,
+            60 * 1000,
+            alarmIntent
+        )
+
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         val provider = LocationManager.GPS_PROVIDER
@@ -86,6 +119,11 @@ class LocationService : Service(), LocationListener {
             }
         }
 
+        isInited = true
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+
 //        if (ActivityCompat.checkSelfPermission(
 //                this,
 //                Manifest.permission.ACCESS_FINE_LOCATION
@@ -98,6 +136,10 @@ class LocationService : Service(), LocationListener {
 //        }
 
         return binder
+    }
+
+    override fun stopService(name: Intent?): Boolean {
+        return super.stopService(name)
     }
 
     private val binder = object : ILocationService.Stub() {
