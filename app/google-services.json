@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "311597048746",
+    "firebase_url": "https://servicetest-e1ee0.firebaseio.com",
+    "project_id": "servicetest-e1ee0",
+    "storage_bucket": "servicetest-e1ee0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311597048746:android:5863c5542e87e7da0b81d3",
+        "android_client_info": {
+          "package_name": "co.fullstack.foregroundtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "311597048746-k3mhib7qh8qe15976767m1f2g4t3f28d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN0Ge_d_zyQDvP3A-wbNCWSORXGU6rE-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "311597048746-k3mhib7qh8qe15976767m1f2g4t3f28d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
