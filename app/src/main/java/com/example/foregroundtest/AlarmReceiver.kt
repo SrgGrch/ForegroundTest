@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.SystemClock
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -30,8 +29,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
 
             alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 60 * 1000,
+                AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis(),
                 alarmIntent
             )
         }

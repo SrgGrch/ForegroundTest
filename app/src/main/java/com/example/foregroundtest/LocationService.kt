@@ -8,7 +8,10 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -115,8 +118,8 @@ class LocationService : Service(), LocationListener {
 
 
         alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.ELAPSED_REALTIME_WAKEUP,
-            SystemClock.elapsedRealtime() + 60 * 1000,
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + 60 * 1000,
             alarmIntent
         )
 //        alarmManager.setRepeating(

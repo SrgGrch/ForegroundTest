@@ -1,8 +1,6 @@
 package com.example.foregroundtest
 
 import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -12,7 +10,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
@@ -51,8 +48,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startButton.setOnClickListener {
-
             val prefs = getSharedPreferences("Loc", Context.MODE_PRIVATE)
 
             prefs.edit()
@@ -73,8 +68,6 @@ class MainActivity : AppCompatActivity() {
 
                 startService(intent)
                 bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
-                startButton.isEnabled = false
-                stopButton.isEnabled = true
 
                 textView.text = "Binding"
             } else {
@@ -87,42 +80,6 @@ class MainActivity : AppCompatActivity() {
                     1
                 )
             }
-
-        }
-
-        stopButton.setOnClickListener {
-            if (locationService != null) {
-                locationService?.removeOnNewLocationListener()
-                unbindService(mConnection)
-                startService(Intent(this, LocationService::class.java).apply {
-                    action = "STOP"
-                })
-                startButton.isEnabled = true
-                stopButton.isEnabled = false
-                textView.text = "Stopped"
-                count = 0
-                textView2.text = count.toString()
-            }
-
-            val prefs = getSharedPreferences("Loc", Context.MODE_PRIVATE)
-
-            prefs.edit()
-                .putInt("Restart", 0)
-                .apply()
-        }
-
-        stopAlarmButton.setOnClickListener {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val alarmIntent = Intent(this, AlarmReceiver::class.java).apply {
-                action = "RESTART"
-            }.let {
-                PendingIntent.getBroadcast(this, 0, it, 0)
-            }
-
-            alarmManager.cancel(alarmIntent)
-
-            Toast.makeText(this, "Перезапуск остановлен", Toast.LENGTH_LONG).show()
-        }
     }
 
     override fun onDestroy() {
