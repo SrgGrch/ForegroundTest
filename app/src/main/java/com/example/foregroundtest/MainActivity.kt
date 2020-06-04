@@ -1,12 +1,10 @@
 package com.example.foregroundtest
 
 import android.Manifest
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -48,13 +46,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    lateinit var t: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        TestObject.onNewToken = {
-
-        }
 
         TestObject.messageReceived = {
             token.post {
@@ -76,7 +72,9 @@ class MainActivity : AppCompatActivity() {
                 val msg = token
                 Log.d("NOTIFICATION_TOKEN", msg)
                 this@MainActivity.token.setText(token)
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+
+                t = token ?: ""
+                test.isEnabled = true
             })
 
         FirebaseMessaging.getInstance().isAutoInitEnabled = true
@@ -112,6 +110,22 @@ class MainActivity : AppCompatActivity() {
                 ),
                 1
             )
+        }
+
+        test.setOnClickListener {
+            val token = prefs.getString("Token", "")
+            if (t != "") {
+                val clipboard: ClipboardManager =
+                    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("token", token)
+                clipboard.setPrimaryClip(clip)
+
+                Toast.makeText(this, "Token saved to clipboard", Toast.LENGTH_LONG).show()
+            }
+
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("http://51.144.142.175:8080/test.html"))
+            startActivity(browserIntent)
         }
 
 //        stopButton.setOnClickListener {

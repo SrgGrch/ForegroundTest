@@ -122,7 +122,6 @@ class LocationService : Service(), LocationListener {
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        val provider = LocationManager.GPS_PROVIDER
         val providers = locationManager.getProviders(false)
 
         providers.map {
