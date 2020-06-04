@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             action = "STOP"
         })
 
+        unbindService(mConnection)
         super.onDestroy()
     }
 }

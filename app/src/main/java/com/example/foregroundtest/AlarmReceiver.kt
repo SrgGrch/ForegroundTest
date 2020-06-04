@@ -28,9 +28,11 @@ class AlarmReceiver : BroadcastReceiver() {
             }
 
 
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis(),
+            alarmManager.setAlarmClock(
+                AlarmManager.AlarmClockInfo(
+                    System.currentTimeMillis() + 60 * 1000,
+                    alarmIntent
+                ),
                 alarmIntent
             )
         }

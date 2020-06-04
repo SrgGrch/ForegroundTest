@@ -117,9 +117,11 @@ class LocationService : Service(), LocationListener {
         }
 
 
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() + 60 * 1000,
+        alarmManager.setAlarmClock(
+            AlarmManager.AlarmClockInfo(
+                System.currentTimeMillis() + 60 * 1000,
+                alarmIntent
+            ),
             alarmIntent
         )
 //        alarmManager.setRepeating(
@@ -164,10 +166,6 @@ class LocationService : Service(), LocationListener {
 //        }
 
         return binder
-    }
-
-    override fun stopService(name: Intent?): Boolean {
-        return super.stopService(name)
     }
 
     private val binder = object : ILocationService.Stub() {
